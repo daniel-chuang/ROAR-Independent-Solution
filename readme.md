@@ -4,11 +4,13 @@ Written by Daniel Chuang, describing his team's experience and solution for thei
 
 ## Introduction
 
-The Summer 2022 ROAR S1/S2 Series competition is an autonomous racing competition held by the University of California, Berkeley, by Allen Yang, the Executive Director for the FHL Vive Center for Enhanced Reality. Competitors use Python to automate a simulated Tesla Model 3 in the virtual Carla research environment, which was developed for the testing of self-driving car algorithms. The challenge is to autonomously control a car to drive around a simulated environment of the Berkeley campus and the hills within its vicinity.
+The Summer 2022 ROAR S1/S2 Series competition is an autonomous racing competition held by the University of California, Berkeley. Competitors use Python to automate a simulated Tesla Model 3 in the virtual Carla research environment, which was developed for the testing of self-driving car algorithms. The objective is to autonomously control a car to drive around a simulated environment of the Berkeley campus and its vicinity as fast as possible.
 
 In this paper, I will discuss how we improved upon the previous solution developed by Aaron Xie, resulting in a lap time ~35 seconds faster than the previous record, for a ~6.7% faster speed. First, we reprogrammed the lateral controller to break at fewer sections, and manually tuned portions of the run that posed risk of collision. Secondly, we made a new set of waypoints that followed more optimal racing lines, to minimize lost velocity during turns. Finally, we developed a suite of tools to test the car efficiently, which is open-sourced for future competitors to use.
 
 ## Reprogramming the Controller
+
+Our car is controlled by
 
 ## Tuning Racing Lines
 
@@ -18,7 +20,7 @@ In this paper, I will discuss how we improved upon the previous solution develop
 
 One of the immediate challenges that we encountered in this competition was the difficulty of testing changes. The lap is extremely long, yet competitors can only monitor the immediate field of view of the car. Given the miniscule proportion that the field of view is compared to the entire race course, and the high speed that the car is traveling at, this lack of information leads to inefficient testing of algorithms, slowing down development time. Moreover, this lack of information also means that only the current state of the car can be monitored.
 
-In response to this issue, we created a program that generates a live map of the race course that displays the car's current position, as well its past positions. By doing so, we were able to constantly run the algorithm, keeping track of locations at which the car would crash without needing a team member to constantly monitor it. Every time the car crashed, the program would save an image of the map, so we were able to see exactly what happened during the collision. Additionally, we were able to execute better racing lines when planning and creating the waypoints for the car. This is because we factored in not only the current turn but also the turns that came after it, which was a significant improvement upon the previous solution.
+In response to this issue, we created a program that generates a live map of the race course that displays the car's current position, as well its past positions. By doing so, we were able to constantly run the algorithm, keeping track of locations at which the car would crash without needing a team member to constantly monitor it. Every time the car crashed, the program would save an image of the map, so we were able to see exactly what happened during the collision. Additionally, we were able to execute better racing lines when planning and creating the waypoints for the car. This is because we factored in not only the current turn but also the turns that came after it, which was a significant improvement upon the previous solution. However, the most useful feature of this map was 
 
 In order to create the map, we downloaded the occupancy map of the race course [https://roar.berkeley.edu/berkeley-major-map/] and imported it as a 2-dimensional Numpy array. Then, we created 12 checkpoints, dividing the map into smaller sections. Using this data, we programmed a function that takes the coordinates of the car using the Carla API, and records it onto a birds-eye view of the map during a run by modifying the Numpy array and displaying it with OpenCV, with different colors scaling off of speed and magnitude of acceleration.
 
